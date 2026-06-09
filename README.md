@@ -21,7 +21,7 @@
 ## 이어지는 방향
 이후 [iTransformer](https://arxiv.org/abs/2310.06625)가 바로 이 지점 — 시간 축이 아니라
 **변수(variate) 축에 attention**을 걸어 변수 간 관계를 명시적으로 다루는 접근 — 을 제안한다는 것을
-알게 되어, 그 방향으로 개인 프로젝트를 이어가고 있습니다. → *(후속 레포 링크 예정)*
+알게 되어, 그 방향으로 개인 프로젝트를 이어가고 있습니다. → (https://github.com/JunYoungHur/iTransformer-XAI-Financial-Forecasting)
 
 ## 코드
 `src/`에 전처리·데이터셋 구성·TFT 학습·분위수 예측·MPT 포트폴리오 코드가 있습니다.

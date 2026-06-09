@@ -2,9 +2,8 @@
 Markowitz mean-variance portfolio optimization (Modern Portfolio Theory).
 
 Given a table of historical prices (rows = dates, columns = assets), find the
-asset weights that maximize the Sharpe ratio. This was the downstream step in
-the original project: feed the model's predicted returns in here to pick a
-portfolio. Kept as a standalone, dependency-light utility.
+asset weights that maximize the Sharpe ratio. Predicted returns from the model
+feed in here as the downstream allocation step.
 
 Usage:
     python src/portfolio.py --prices data/prices.csv

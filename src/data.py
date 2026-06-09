@@ -20,8 +20,7 @@ def load_and_clean(cfg: DataConfig) -> pd.DataFrame:
     df = df.sort_values(["Ticker", "Date"]).reset_index(drop=True)
     df = df[cfg.required_columns]
 
-    # The raw merge occasionally produced inf values in ratio columns;
-    # treat them as missing rather than silently clamping to a magic number.
+    # Ratio columns can contain inf from division by zero; treat as missing.
     df = df.replace([np.inf, -np.inf], np.nan).dropna()
 
     # Drop tickers without enough raw history.

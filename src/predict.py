@@ -16,21 +16,28 @@ from data import build_frame, train_valid_split
 from model import build_datasets, build_model
 
 
-def plot_quantile_samples(decoder_target, q_low, q_med, q_high, out_dir, n=10):
+def plot_quantile_forecasts(decoder_target, q_low, q_med, q_high, out_dir, n=10):
+    """Plot the full prediction horizon per sample: median line + [Q0.2, Q0.8] band."""
     os.makedirs(out_dir, exist_ok=True)
-    idx = np.random.choice(len(decoder_target), size=min(n, len(decoder_target)), replace=False)
+    n = min(n, len(decoder_target))
+    idx = np.random.choice(len(decoder_target), size=n, replace=False)
+    horizon = decoder_target.shape[1]
+    steps = np.arange(1, horizon + 1)
+
     plt.figure(figsize=(14, 8))
     for i, j in enumerate(idx):
         plt.subplot(2, 5, i + 1)
-        plt.plot([0], [decoder_target[j]], "go", label="Actual", markersize=8)
-        plt.plot([0], [q_low[j]], "rx", label="Q0.2", markersize=8)
-        plt.plot([0], [q_med[j]], "yo", label="Q0.5", markersize=8)
-        plt.plot([0], [q_high[j]], "m^", label="Q0.8", markersize=8)
+        plt.fill_between(steps, q_low[j], q_high[j], color="tab:blue",
+                         alpha=0.2, label="Q0.2-Q0.8")
+        plt.plot(steps, q_med[j], "-o", color="tab:blue", markersize=3, label="Q0.5")
+        plt.plot(steps, decoder_target[j], "-o", color="black", markersize=3, label="Actual")
         plt.title(f"Sample {i + 1}", fontsize=10)
-        plt.xticks([])
+        plt.xlabel("step ahead", fontsize=8)
         plt.grid(alpha=0.3)
+        if i == 0:
+            plt.legend(fontsize=7)
     plt.tight_layout()
-    path = os.path.join(out_dir, "quantile_samples.png")
+    path = os.path.join(out_dir, "quantile_forecasts.png")
     plt.savefig(path, dpi=120, bbox_inches="tight")
     print(f"Saved {path}")
 
@@ -58,17 +65,18 @@ def main():
     result = tft.predict(val_loader, mode="quantiles", return_x=True)
     preds, x = result.output, result.x
 
-    decoder_target = x["decoder_target"].cpu().numpy().flatten()
-    q_low = preds[..., 0].cpu().numpy().flatten()
-    q_med = preds[..., 1].cpu().numpy().flatten()
-    q_high = preds[..., 2].cpu().numpy().flatten()
+    # Keep (n_samples, horizon) shape so we can plot the full forecast horizon.
+    decoder_target = x["decoder_target"].cpu().numpy()
+    q_low = preds[..., 0].cpu().numpy()
+    q_med = preds[..., 1].cpu().numpy()
+    q_high = preds[..., 2].cpu().numpy()
 
-    # Simple quantile-coverage sanity check: fraction of actuals inside [Q0.2, Q0.8].
+    # Quantile-coverage check: fraction of actuals inside the [Q0.2, Q0.8] band.
+    # A well-calibrated 0.2/0.8 interval should cover ~0.6 of the actuals.
     inside = np.mean((decoder_target >= q_low) & (decoder_target <= q_high))
-    print(f"Empirical coverage of the [0.2, 0.8] interval: {inside:.3f} "
-          f"(ideal ~0.60)")
+    print(f"Empirical [0.2, 0.8] coverage: {inside:.3f} (target 0.60)")
 
-    plot_quantile_samples(decoder_target, q_low, q_med, q_high, paths.figure_dir)
+    plot_quantile_forecasts(decoder_target, q_low, q_med, q_high, paths.figure_dir)
 
 
 if __name__ == "__main__":

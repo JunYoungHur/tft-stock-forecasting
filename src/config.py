@@ -1,9 +1,4 @@
-"""
-Configuration for the TFT stock prediction experiment.
-
-All paths and hyperparameters live here so the rest of the code stays
-environment-agnostic (no hardcoded Colab paths).
-"""
+"""Configuration: paths and hyperparameters for the TFT stock model."""
 from dataclasses import dataclass, field
 from typing import List
 
@@ -53,7 +48,7 @@ class ModelConfig:
     weight_decay: float = 1e-5
     quantiles: List[float] = field(default_factory=lambda: [0.2, 0.5, 0.8])
     batch_size: int = 128
-    max_epochs: int = 30           # was 1 in the throwaway notebook; real runs need more
+    max_epochs: int = 30
     gradient_clip_val: float = 0.3
     accumulate_grad_batches: int = 8
 

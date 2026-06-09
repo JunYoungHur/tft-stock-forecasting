@@ -1,0 +1,8 @@
+torch>=2.0
+pytorch-forecasting>=1.0
+lightning>=2.0
+pandas
+numpy
+scipy
+matplotlib
+seaborn

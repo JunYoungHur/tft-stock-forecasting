@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+artifacts/
+*.pth
+.DS_Store
+nohup.out
+data/*.csv

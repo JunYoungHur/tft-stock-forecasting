@@ -3,11 +3,6 @@ Train the TFT stock model end to end.
 
 Usage:
     python src/train.py --data data/merged_data_300.csv --epochs 30
-
-This is a cleaned-up, runnable version of the original exploratory notebook.
-Note: this project is an exploration of TFT on noisy financial data, not a
-profitable trading system. See README for the honest write-up of what worked
-and what didn't.
 """
 import argparse
 import os
